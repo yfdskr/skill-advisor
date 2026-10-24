@@ -42,6 +42,37 @@ Use $skill-advisor to organize my installed skills by category and project phase
 Use $skill-advisor to check whether I already have a skill for this workflow before searching online.
 ```
 
+## Classification and tests
+
+Categories use keyword heuristics over the skill name and description. Explicit
+frontend terms (such as `frontend`, `UI`, `React`, or `website`) take precedence
+over visual terms, so UI design skills stay in Web and Frontend even when they
+mention images or visual design. Image design, photography, illustration, video,
+and other visual creation skills without frontend context use Visual and Media.
+Bare `design` is a fallback after the specific categories.
+
+Keywords match whole words, with explicit compound forms such as `imagegen`,
+`nextjs`, and `tailwindcss`. Ordinary `next` and `sites` in descriptions do not
+imply frontend work; the `sites` skill name and `Sites plugin` still match.
+Other category priorities and project phase rules remain unchanged. Mixed-purpose
+descriptions can still need manual interpretation.
+
+Run the dependency-free regression suite from the repository root:
+
+```powershell
+pwsh -NoProfile -File ./tests/list-local-skills.Tests.ps1
+```
+
+Windows PowerShell 5.1 is also supported:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File ./tests/list-local-skills.Tests.ps1
+```
+
+The suite covers overlapping keywords, frontend preservation, substring false
+positives, category fallbacks, and inventory output. GitHub Actions runs it on
+Windows PowerShell 5.1 and PowerShell 7 on Windows and Linux.
+
 ## Repository Layout
 
 ```text
@@ -50,6 +81,8 @@ agents/
   openai.yaml
 scripts/
   list-local-skills.ps1
+tests/
+  list-local-skills.Tests.ps1
 README.md
 LICENSE
 ```

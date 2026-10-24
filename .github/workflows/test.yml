@@ -1,0 +1,26 @@
+name: PowerShell regression tests
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            shell: powershell
+          - os: windows-latest
+            shell: pwsh
+          - os: ubuntu-latest
+            shell: pwsh
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run regression tests
+        shell: ${{ matrix.shell }}
+        run: ./tests/list-local-skills.Tests.ps1
