@@ -15,26 +15,33 @@ function Get-SkillCategory {
 
     $text = "$Name $Description".ToLowerInvariant()
 
-    if ($text -match "web|website|frontend|front-end|react|next|nextjs|\bui\b|\bux\b|design|sites|tailwind|\bcss\b") {
+    # Explicit frontend context wins over incidental visual/media terms.
+    # Bare 'next' and 'sites' are ordinary words; match their framework/tool forms.
+    if ($text -match '\b(web|websites?|frontend|front[ -]end|react(?:js)?|next(?:js|\.js)|ui|ux|tailwind(?:css)?|css)\b|\b(?:user interface|user experience|landing pages?|sites? plugin)\b' -or $Name -match '^sites(?::sites)?$') {
         return "Web and Frontend"
     }
-    if ($text -match "image|visual|visualize|canvas|diagram|chart|graph|media") {
+    if ($text -match '\b(image(?:s|gen)?|visual(?:s|ize|ization|izations)?|canvas|diagrams?|charts?|graphs?|media|photo(?:s|graphy|graphic|graphs)?|illustrat(?:ion|ions|e)|video(?:s)?|audio)\b') {
         return "Visual and Media"
     }
-    if ($text -match "automation|automate|hook|loop|plugin|sdk|api|gmail|calendar|slack|github|agent") {
+    if ($text -match '\b(automat(?:ion|e|ed|ing)|hooks?|loop|plugins?|sdks?|apis?|gmail|calendar|slack|github|agents?|agentskills)\b') {
         return "Automation and Integrations"
     }
-    if ($text -match "prd|roadmap|project|planning|plan|product|requirement|spec") {
+    if ($text -match '\b(prd|roadmaps?|projects?|planning|plans?|products?|requirements?|specs?|specifications?)\b') {
         return "Planning and PM"
     }
-    if ($text -match "review|test|testing|quality|audit|security|lint|\bpr\b|pull request|bug") {
+    if ($text -match '\b(reviews?|tests?|testing|quality|audits?|security|lint|pr|pull requests?|bugs?|debug(?:ging|ger)?)\b') {
         return "Review and Quality"
     }
-    if ($text -match "clear|cleanup|clean|config|settings|statusline|cli|install|migrate|shell|computer|browser|chrome") {
+    if ($text -match '\b(clear|cleanup|clean|config(?:uration)?|settings|statusline|cli|install(?:er|ation)?|migrat(?:e|ion)|shell|computer|browser|chrome)\b') {
         return "System and Configuration"
     }
-    if ($text -match "research|paper|literature|scholar|docs|document|writing|write|readme|citation") {
+    if ($text -match '\b(research|papers?|literature|scholar|docs|documents?|documentation|writing|write|readme|citations?)\b') {
         return "Research and Writing"
+    }
+
+    # Preserve the legacy design-only fallback without masking a specific domain.
+    if ($text -match '\bdesign\b') {
+        return "Web and Frontend"
     }
 
     return "General"
